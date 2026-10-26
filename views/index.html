@@ -1,0 +1,162 @@
+$def with (pagina_actual, historial, esta_vacio)
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navegador Web</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 25px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .browser-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            transition: background 0.2s;
+        }
+        .btn-primary { background-color: #3498db; }
+        .btn-primary:hover { background-color: #2980b9; }
+        .btn-danger { background-color: #e74c3c; }
+        .btn-danger:hover { background-color: #c0392b; }
+        .btn-secondary { background-color: #7f8c8d; }
+        .btn-secondary:hover { background-color: #6c757d; }
+
+        .section {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fafafa;
+            border: 1px solid #eee;
+        }
+        .current-page {
+            font-size: 18px;
+            font-weight: bold;
+            color: #27ae60;
+            word-break: break-all;
+        }
+        .history-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .history-list li {
+            padding: 8px 12px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+        .history-list li:first-child {
+            font-weight: bold;
+            color: #2980b9;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-empty { background-color: #f8d7da; color: #721c24; }
+        .badge-active { background-color: #d4edda; color: #155724; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Navegador Web</h1>
+
+    <!-- 1. Opción: Visitar página / 2. Regresar -->
+    <form action="/action" method="POST">
+        <div class="browser-bar">
+            <button type="submit" name="accion" value="regresar" class="btn btn-secondary">⬅️ Regresar</button>
+            <input type="text" name="url" placeholder="Ingresa una URL (ej. www.google.com)">
+            <button type="submit" name="accion" value="visitar" class="btn btn-primary">Ir / Visitar</button>
+        </div>
+    </form>
+
+    <!-- 3. Opción: Mostrar la página actual -->
+    <div class="section">
+        <h3>Página Actual:</h3>
+        $if pagina_actual:
+            <p class="current-page">$pagina_actual</p>
+        $else:
+            <p style="color: #7f8c8d; font-style: italic;">No estás visitando ninguna página actualmente.</p>
+    </div>
+
+    <!-- 5. Opción: Verificar estado del historial -->
+    <div class="section">
+        <h3>Estado del Historial:</h3>
+        $if esta_vacio:
+            <span class="status-badge badge-empty">El historial está VACÍO</span>
+        $else:
+            <span class="status-badge badge-active">El historial contiene páginas</span>
+
+        <!-- Acción: Eliminar historial -->
+        $if not esta_vacio:
+            <div class="actions">
+                <form action="/action" method="POST">
+                    <button type="submit" name="accion" value="limpiar" class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar el historial?');">
+                        Eliminar Historial
+                    </button>
+                </form>
+            </div>
+    </div>
+
+    <!-- 4. Opción: Mostrar historial en orden descendente -->
+    <div class="section">
+        <h3>Historial de Páginas (Orden Descendente - LIFO):</h3>
+        $if historial:
+            <ol class="history-list">
+                $for index, url in enumerate(historial):
+                    <li>
+                        <span>$url</span>
+                        $if index == 0:
+                            <small>(Página Actual)</small>
+                    </li>
+            </ol>
+        $else:
+            <p style="color: #7f8c8d;">No hay historial registrado.</p>
+    </div>
+</div>
+
+</body>
+</html>
